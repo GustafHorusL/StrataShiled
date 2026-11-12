@@ -3,6 +3,7 @@ import { Send, Mail, Phone, MapPin, CheckCircle } from 'lucide-react';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { companyInfo } from '../data/mock';
+import { submitContact } from '../api/contact';
 
 export const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ export const ContactSection = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,19 +27,25 @@ export const ContactSection = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulated submission (mock)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Form submitted:', formData);
-    setIsSubmitted(true);
-    setIsLoading(false);
-    
-    // Reset after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', company: '', message: '' });
-    }, 3000);
+    setError('');
+
+    try {
+      await submitContact(formData);
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({ name: '', email: '', company: '', message: '' });
+      }, 3000);
+    } catch (err) {
+      const apiMessage = err?.response?.data?.message;
+      setError(
+        Array.isArray(apiMessage)
+          ? apiMessage.join(' ')
+          : apiMessage || 'No se pudo enviar el mensaje. Intenta de nuevo.'
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -180,6 +188,10 @@ export const ContactSection = () => {
                     className="bg-black border-white/20 text-white placeholder:text-white/30 focus:border-[#00FFD1] resize-none"
                   />
                 </div>
+
+                {error ? (
+                  <p className="text-red-400 text-sm">{error}</p>
+                ) : null}
 
                 <button
                   type="submit"
