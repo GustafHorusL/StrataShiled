@@ -27,7 +27,7 @@ export const ServicesSection = () => {
             Soluciones integrales de <span className="text-[#00FFD1]">seguridad</span>
           </h2>
           <p className="text-white/60 text-xl max-w-2xl mx-auto">
-            Protegemos tu infraestructura digital con tecnología de vanguardia y experiencia comprobada.
+            Protegemos tu infraestructura digital con tecnología de vanguardia y estandares aceptados en la industria.
           </p>
         </div>
 
